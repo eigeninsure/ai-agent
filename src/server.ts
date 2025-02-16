@@ -45,27 +45,6 @@ app.post('/api/generate', async (req, res) => {
 
     const parsedResponse = JSON.parse(response.content) as { text: string; toolCall?: { name: string; arguments: [any] } };
 
-
-    if (parsedResponse.toolCall && tools[parsedResponse.toolCall.name as keyof typeof tools]) {
-      const tool = tools[parsedResponse.toolCall.name as keyof typeof tools];
-
-      if (!tool) {
-        throw new Error(`Tool ${parsedResponse.toolCall.name} not found`);
-      }
-
-      try {
-        const result = await tool.execute(...parsedResponse.toolCall.arguments);
-        return res.json({
-          text: parsedResponse.text,
-          ...result
-        }
-        );
-      } catch (error) {
-        console.error(`Error executing tool ${parsedResponse.toolCall.name}:`, error);
-        throw error;
-      }
-    }
-
     return res.json(parsedResponse)
   } catch (error) {
     console.error('Error generating text:', error);
