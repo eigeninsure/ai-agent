@@ -41,6 +41,8 @@ app.post('/api/generate', async (req, res) => {
       })
     ) as unknown as { text: string; toolCalls?: { name: string; arguments: any }[] };
 
+    console.log(result)
+
     if (result.toolCalls && result.toolCalls.length > 0) {
       const toolResults = await Promise.all(
         result.toolCalls.map(async (toolCall) => {
