@@ -1,3 +1,4 @@
+// @ts-ignore
 import { OpacityAdapter } from '@layr-labs/agentkit-opacity';
 import { EigenDAAdapter } from '@layr-labs/agentkit-eigenda';
 import dotenv from 'dotenv';

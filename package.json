@@ -25,7 +25,6 @@
   "dependencies": {
     "@layr-labs/agentkit": "latest",
     "@layr-labs/agentkit-eigenda": "latest",
-    "@layr-labs/agentkit-opacity": "latest",
     "@layr-labs/agentkit-witnesschain": "latest",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -35,6 +34,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@layr-labs/agentkit-opacity": "^0.1.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.24",
