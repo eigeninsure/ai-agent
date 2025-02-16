@@ -1,7 +1,8 @@
-import express from 'express';
+import { tools, toolsSystemPrompt } from './tools.js';
+
 import cors from 'cors';
 import { createAgent } from './agent/createAgent.js';
-import { tools, toolsSystemPrompt } from './tools.js';
+import express from 'express';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,10 +30,11 @@ app.post('/api/generate', async (req, res) => {
       return res.status(503).json({ error: 'Agent not ready' });
     }
 
-    const { messages, system } = req.body;
+    const { messages, system, prompt } = req.body;
 
     const result = await agent.generateVerifiableText(
       JSON.stringify({
+        prompt,
         messages,
         system: `${system}\n\n${toolsSystemPrompt}`,
         tools
