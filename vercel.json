@@ -13,13 +13,13 @@
         }
     ],
     "env": {
-        "OPACITY_OPENAI_KEY": "@opacity_openai_key",
-        "OPACITY_TEAM_ID": "@opacity_team_id",
-        "OPACITY_TEAM_NAME": "@opacity_team_name",
-        "OPACITY_PROVER_URL": "@opacity_prover_url",
-        "EIGENDA_PRIVATE_KEY": "@eigenda_private_key",
-        "EIGENDA_API_URL": "@eigenda_api_url",
-        "EIGENDA_BASE_RPC_URL": "@eigenda_base_rpc_url",
-        "EIGENDA_CREDITS_CONTRACT": "@eigenda_credits_contract"
+        "OPACITY_OPENAI_KEY": "@OPACITY_OPENAI_KEY",
+        "OPACITY_TEAM_ID": "@OPACITY_TEAM_ID",
+        "OPACITY_TEAM_NAME": "@OPACITY_TEAM_NAME",
+        "OPACITY_PROVER_URL": "@OPACITY_PROVER_URL",
+        "EIGENDA_PRIVATE_KEY": "@EIGENDA_PRIVATE_KEY",
+        "EIGENDA_API_URL": "@EIGENDA_API_URL",
+        "EIGENDA_BASE_RPC_URL": "@EIGENDA_BASE_RPC_URL",
+        "EIGENDA_CREDITS_CONTRACT": "@EIGENDA_CREDITS_CONTRACT"
     }
 }
