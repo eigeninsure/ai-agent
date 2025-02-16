@@ -31,7 +31,7 @@ app.post('/api/generate', async (req, res) => {
     }
 
     const messages: string[] = req.body.messages;
-    const prompt: string = messages[-1];
+    const prompt: string = messages[messages.length - 1];
     const system: string = req.body.system;
 
     const response = await agent.generateVerifiableText(
@@ -43,7 +43,8 @@ app.post('/api/generate', async (req, res) => {
       })
     ) as unknown as { content: string; proof: any };
 
-    const parsedResponse = JSON.parse(response.content) as { result: string; toolCall?: { name: string; arguments: [any] } };
+    const parsedResponse = JSON.parse(response.content) as { text: string; toolCall?: { name: string; arguments: [any] } };
+
 
     if (parsedResponse.toolCall && tools[parsedResponse.toolCall.name as keyof typeof tools]) {
       const tool = tools[parsedResponse.toolCall.name as keyof typeof tools];
@@ -54,14 +55,18 @@ app.post('/api/generate', async (req, res) => {
 
       try {
         const result = await tool.execute(...parsedResponse.toolCall.arguments);
-        return result;
+        return res.json({
+          text: parsedResponse.text,
+          ...result
+        }
+        );
       } catch (error) {
         console.error(`Error executing tool ${parsedResponse.toolCall.name}:`, error);
         throw error;
       }
     }
 
-    return parsedResponse;
+    return res.json(parsedResponse)
   } catch (error) {
     console.error('Error generating text:', error);
     res.status(500).json({

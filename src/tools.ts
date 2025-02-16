@@ -25,10 +25,15 @@ export const tools = {
       const ipfsCid = upload.IpfsHash
       console.log("Insurance Creation saved to IPFS ", ipfsCid)
 
+      // insuranceId + premium to Pay
+
       return {
-        ipfsCid,
-        type: 'client-side',
-        action: 'createInsurance'
+        toolCall: "createInsurance",
+        result: {
+          "ipfsCid": ipfsCid,
+          "insuranceId": 1,
+          "depositAmount": 10
+        }
       };
     }
   }
@@ -46,7 +51,7 @@ Guidelines:
 - If a tool call is made, please provide a stringifed json object that contains the
 toolCall name, and all the parameter values in order.
 
-Output Format: {text: string; toolCalls?: { name: string; arguments: [arg1, arg2, arg3, ...] }}
+Output Format: {text: string; toolCall?: { name: string; arguments: [arg1, arg2, arg3, ...] }}
 `;
 
 /*
