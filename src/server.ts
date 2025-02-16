@@ -1,5 +1,3 @@
-import { tools, toolsSystemPrompt } from './tools.js';
-
 import cors from 'cors';
 import { createAgent } from './agent/createAgent.js';
 import express from 'express';
@@ -38,12 +36,12 @@ app.post('/api/generate', async (req, res) => {
       JSON.stringify({
         prompt,
         messages,
-        system: `${system}\n\n${toolsSystemPrompt}`,
-        tools
+        system
       })
     ) as unknown as { content: string; proof: any };
 
     const parsedResponse = JSON.parse(response.content) as { text: string; toolCall?: { name: string; arguments: [any] } };
+
 
     return res.json(parsedResponse)
   } catch (error) {
