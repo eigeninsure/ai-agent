@@ -32,16 +32,16 @@ app.post('/api/generate', async (req, res) => {
 
     const { messages, system, prompt } = req.body;
 
-    const result = await agent.generateVerifiableText(
+    const response = await agent.generateVerifiableText(
       JSON.stringify({
         prompt,
         messages,
         system: `${system}\n\n${toolsSystemPrompt}`,
         tools
       })
-    ) as unknown as { text: string; toolCalls?: { name: string; arguments: any }[] };
-
-    console.log(result)
+    ) as unknown as { content: { text: string; toolCalls?: { name: string; arguments: any[] }[]} };
+    const result = JSON.parse(response.content);
+    console.log('Full result:', JSON.stringify(result, null, 2));
 
     if (result.toolCalls && result.toolCalls.length > 0) {
       const toolResults = await Promise.all(
@@ -51,14 +51,15 @@ app.post('/api/generate', async (req, res) => {
             throw new Error(`Tool ${toolCall.name} not found`);
           }
           try {
-            const validatedArgs = tool.schema.parse(toolCall.arguments);
-            const result = await tool.execute() as any;
+            // const validatedArgs = tool.schema.parse(toolCall.arguments);
+            console.log(toolCall.arguments);
+            const result = await tool.execute(...toolCall.arguments);
 
             // Mark client-side tools
             if (result.type === 'client-side') {
               return {
                 ...result,
-                args: validatedArgs
+                args: toolCall.arguments
               };
             }
 
@@ -69,14 +70,14 @@ app.post('/api/generate', async (req, res) => {
           }
         })
       );
-
+      console.log("returning toolcall")
       return res.json({
         content: result.text,
         toolCalls: result.toolCalls,
         toolResults
       });
     }
-
+    console.log("returning just text")
     return res.json({
       content: result.text
     });
