@@ -8,7 +8,8 @@ export const tools = {
       coverage: z.string(),
       duration: z.number()
     }),
-    execute: async () => {
+    execute: async (amount: number, coverage: string, duration: number) => {
+      console.log("Buy insurance with ", amount, coverage, duration)
       return {
         type: 'client-side',
         action: 'buyInsurance'
