@@ -1,0 +1,25 @@
+{
+    "version": 1,
+    "builds": [
+        {
+            "src": "src/server.ts",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "src/server.ts"
+        }
+    ],
+    "env": {
+        "OPACITY_OPENAI_KEY": "@opacity_openai_key",
+        "OPACITY_TEAM_ID": "@opacity_team_id",
+        "OPACITY_TEAM_NAME": "@opacity_team_name",
+        "OPACITY_PROVER_URL": "@opacity_prover_url",
+        "EIGENDA_PRIVATE_KEY": "@eigenda_private_key",
+        "EIGENDA_API_URL": "@eigenda_api_url",
+        "EIGENDA_BASE_RPC_URL": "@eigenda_base_rpc_url",
+        "EIGENDA_CREDITS_CONTRACT": "@eigenda_credits_contract"
+    }
+}
