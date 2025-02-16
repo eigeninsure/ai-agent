@@ -40,22 +40,31 @@ app.post('/api/generate', async (req, res) => {
     ) as unknown as { text: string; toolCalls?: { name: string; arguments: any }[] };
 
     if (result.toolCalls && result.toolCalls.length > 0) {
-      const toolResults = result.toolCalls.map(toolCall => {
-        // Only execute buy_insurance, return tool calls for others
-        if (toolCall.name === 'buyInsurance') {
-          return {
-            type: 'client-side',
-            action: 'buyInsurance',
-            args: toolCall.arguments
-          };
-        }
-        
-        return {
-          type: 'tool-call',
-          name: toolCall.name,
-          arguments: toolCall.arguments
-        };
-      });
+      const toolResults = await Promise.all(
+        result.toolCalls.map(async (toolCall) => {
+          const tool = tools[toolCall.name as keyof typeof tools];
+          if (!tool) {
+            throw new Error(`Tool ${toolCall.name} not found`);
+          }
+          try {
+            const validatedArgs = tool.schema.parse(toolCall.arguments);
+            const result = await tool.execute(validatedArgs as any) as any;
+
+            // Mark client-side tools
+            if (result.type === 'client-side') {
+              return {
+                ...result,
+                args: validatedArgs
+              };
+            }
+
+            return result;
+          } catch (error) {
+            console.error(`Error executing tool ${toolCall.name}:`, error);
+            throw error;
+          }
+        })
+      );
 
       return res.json({
         content: result.text,
