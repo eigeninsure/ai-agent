@@ -8,11 +8,8 @@ export const tools = {
       coverage: z.string(),
       duration: z.number()
     }),
-    execute: async () => {
-      return {
-        type: 'client-side',
-        action: 'buyInsurance'
-      };
+    execute: async (test: any) => {
+      return 1
     }
   }
 };

@@ -29,54 +29,38 @@ app.post('/api/generate', async (req, res) => {
       return res.status(503).json({ error: 'Agent not ready' });
     }
 
-    const { messages, system } = req.body;
+    const messages: string[] = req.body.messages;
+    const prompt: string = messages[-1];
+    const system: string = req.body.system;
 
-    const result = await agent.generateVerifiableText(
+    const response = await agent.generateVerifiableText(
       JSON.stringify({
+        prompt,
         messages,
         system: `${system}\n\n${toolsSystemPrompt}`,
         tools
       })
-    ) as unknown as { text: string; toolCalls?: { name: string; arguments: any }[] };
+    ) as unknown as { content: string; proof: any };
 
-    if (result.toolCalls && result.toolCalls.length > 0) {
-      const toolResults = await Promise.all(
-        result.toolCalls.map(async (toolCall) => {
-          const tool = tools[toolCall.name as keyof typeof tools];
-          if (!tool) {
-            throw new Error(`Tool ${toolCall.name} not found`);
-          }
-          try {
-            const validatedArgs = tool.schema.parse(toolCall.arguments);
-            const result = await tool.execute(validatedArgs as any) as any;
+    const parsedResponse = JSON.parse(response.content) as { result: string; toolCall?: { name: string; arguments: [any] } };
 
-            // Mark client-side tools
-            if (result.type === 'client-side') {
-              return {
-                ...result,
-                args: validatedArgs
-              };
-            }
+    if (parsedResponse.toolCall && tools[parsedResponse.toolCall.name as keyof typeof tools]) {
+      const tool = tools[parsedResponse.toolCall.name as keyof typeof tools];
 
-            return result;
-          } catch (error) {
-            console.error(`Error executing tool ${toolCall.name}:`, error);
-            throw error;
-          }
-        })
-      );
+      if (!tool) {
+        throw new Error(`Tool ${parsedResponse.toolCall.name} not found`);
+      }
 
-      return res.json({
-        content: result.text,
-        toolCalls: result.toolCalls,
-        toolResults
-      });
+      try {
+        const result = await tool.execute(...parsedResponse.toolCall.arguments);
+        return result;
+      } catch (error) {
+        console.error(`Error executing tool ${parsedResponse.toolCall.name}:`, error);
+        throw error;
+      }
     }
 
-    return res.json({
-      content: result.text
-    });
-
+    return parsedResponse;
   } catch (error) {
     console.error('Error generating text:', error);
     res.status(500).json({
