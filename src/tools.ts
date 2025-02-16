@@ -25,9 +25,9 @@ Available tools:
    - Parameters: amount (number), coverage (string), duration (number)
 
 Guidelines:
+- The text will be the text response to the user that details what has been done.
 - If a tool call is made, please provide a stringifed json object that contains the
 toolCall name, and all the parameter values in order.
-- The text will be the text response to the user that details what has been done.
 
 Output Format: {text: string; toolCalls?: { name: string; arguments: [arg1, arg2, arg3, ...] }}
 `;
