@@ -48,7 +48,7 @@ app.post('/api/generate', async (req, res) => {
           }
           try {
             const validatedArgs = tool.schema.parse(toolCall.arguments);
-            const result = await tool.execute(validatedArgs as any) as any;
+            const result = await tool.execute() as any;
 
             // Mark client-side tools
             if (result.type === 'client-side') {
